@@ -1,6 +1,5 @@
-# classify.py
 from newspaper import Article
-import joblib  # For model persistence
+import joblib  
 
 def classify_new_article(article_url):
     # Load the saved model and vectorizer

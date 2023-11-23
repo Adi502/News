@@ -5,14 +5,13 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 # Load your labeled dataset
-# Replace 'your_dataset.csv' with the actual path to your labeled dataset file
-df = pd.read_csv('Data.csv', encoding='latin1')  # or encoding='ISO-8859-1'
+df = pd.read_csv('Data.csv', encoding='latin1')
 
 # Split the data into training and testing sets
 train_data, test_data = train_test_split(df, test_size=0.2, random_state=42)
 
 # Convert text data to TF-IDF features
-tfidf_vectorizer = TfidfVectorizer(max_features=5000)  # Adjust max_features as needed
+tfidf_vectorizer = TfidfVectorizer(max_features=5000)  
 X_train = tfidf_vectorizer.fit_transform(train_data['Text'])
 X_test = tfidf_vectorizer.transform(test_data['Text'])
 
