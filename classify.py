@@ -22,5 +22,5 @@ def classify_new_article(article_url):
     print(f'Predicted Section for the new article: {prediction}')
 
 if __name__ == "__main__":
-    new_article_url = 'https://indianexpress.com/article/education/study-abroad/elite-colleges-favour-students-with-good-academic-credentials-and-strong-identity-says-university-college-london-student-indians-in-top-colleges-8997427/'
+    new_article_url = 'https://indianexpress.com/article/sports/cricket/india-versus-australia-low-key-early-audition-for-next-years-t20-world-cup-9038353/'
     classify_new_article(new_article_url)

@@ -1,53 +1,42 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.metrics import accuracy_score, classification_report
-import joblib  
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
-def train_classification_model(data_file):
-    # Read the CSV file into a DataFrame
-    df = pd.read_csv(data_file, encoding='latin1')
+# Load your labeled dataset
+# Replace 'your_dataset.csv' with the actual path to your labeled dataset file
+df = pd.read_csv('Data.csv', encoding='latin1')  # or encoding='ISO-8859-1'
 
-    # Split the data into training and testing sets
-    train_data, test_data = train_test_split(df, test_size=0.2, random_state=42)
+# Split the data into training and testing sets
+train_data, test_data = train_test_split(df, test_size=0.2, random_state=42)
 
-    # Extract features (X) and labels (y) from the training data
-    X_train = train_data['Text']
-    y_train = train_data['Section']
+# Convert text data to TF-IDF features
+tfidf_vectorizer = TfidfVectorizer(max_features=5000)  # Adjust max_features as needed
+X_train = tfidf_vectorizer.fit_transform(train_data['Text'])
+X_test = tfidf_vectorizer.transform(test_data['Text'])
 
-    # Extract features (X) and labels (y) from the testing data
-    X_test = test_data['Text']
-    y_test = test_data['Section']
+# Convert labels to numerical format
+y_train = train_data['Section'].astype('category').cat.codes
+y_test = test_data['Section'].astype('category').cat.codes
 
-    # Use TF-IDF vectorization to convert text data into numerical features
-    vectorizer = TfidfVectorizer(max_features=5000)
-    X_train_tfidf = vectorizer.fit_transform(X_train)
-    X_test_tfidf = vectorizer.transform(X_test)
+# Train Random Forest model
+rf_model = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_model.fit(X_train, y_train)
 
-    # Train a Naive Bayes classifier
-    classifier = MultinomialNB()
-    classifier.fit(X_train_tfidf, y_train)
+# Make predictions on the test set
+y_pred = rf_model.predict(X_test)
 
-    # Save the model and vectorizer for future use
-    joblib.dump(classifier, 'classifier_model.joblib')
-    joblib.dump(vectorizer, 'tfidf_vectorizer.joblib')
+# Save predictions to a CSV file
+output_df = pd.DataFrame({'Actual': test_data['Section'], 'Predicted': y_pred})
+output_df.to_csv('classification_report.csv', index=False, header=['Actual', 'Predicted'])
 
-    # Make predictions on the test set
-    y_pred = classifier.predict(X_test_tfidf)
+# Calculate accuracy, confusion matrix, and classification report
+accuracy = accuracy_score(y_test, y_pred)
+conf_matrix = confusion_matrix(y_test, y_pred)
+classification_report_str = classification_report(y_test, y_pred, target_names=df['Section'].unique())
 
-    # Print accuracy and classification report
-    accuracy = accuracy_score(y_test, y_pred)
-    report = classification_report(y_test, y_pred)
-
-    print(f'Accuracy: {accuracy}')
-    print('Classification Report:')
-    print(report)
-
-    # Save the evaluation report to a CSV file
-    report_df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
-    report_df.to_csv('classification_report.csv', index=False)
-
-if __name__ == "__main__":
-    data_file = 'Data.csv'
-    train_classification_model(data_file)
+print(f'Accuracy: {accuracy}')
+print(f'Confusion Matrix:\n{conf_matrix}')
+print('Classification Report:')
+print(classification_report_str)
