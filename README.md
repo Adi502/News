@@ -15,10 +15,10 @@ Make sure you have the following installed on your machine:
 
 1. Clone the repository:
 
-   ```git clone https://github.com/your-username/your-repository.git```
+   ```git clone https://github.com/Adi05/News.git```
 2. Navigate to the project directory:
 
-   ```cd your-repository```
+   ```cd News```
 3. Install the required Python packages:
 
    ```pip install -r requirements.txt```
