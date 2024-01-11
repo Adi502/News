@@ -3,6 +3,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+import joblib
 
 # Load your labeled dataset
 df = pd.read_csv('Data.csv', encoding='latin1')
@@ -29,6 +30,8 @@ y_pred = rf_model.predict(X_test)
 # Save predictions to a CSV file
 output_df = pd.DataFrame({'Actual': test_data['Section'], 'Predicted': y_pred})
 output_df.to_csv('classification_report.csv', index=False, header=['Actual', 'Predicted'])
+joblib.dump(rf_model, 'classifier_model.joblib')
+joblib.dump(tfidf_vectorizer, 'tfidf_vectorizer.joblib')
 
 # Calculate accuracy, confusion matrix, and classification report
 accuracy = accuracy_score(y_test, y_pred)
